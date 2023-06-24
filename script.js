@@ -29,7 +29,7 @@ const questionUl = document.getElementById("questions");
 
 onValue(questionsInDB, function(snapshot) {
     if (snapshot.exists()) {
-        console.log("Something has changed!")
+        //console.log("Something has changed!")
         let questionsArray = Object.entries(snapshot.val())
 
         clearQuestions()
@@ -45,8 +45,6 @@ onValue(questionsInDB, function(snapshot) {
 
 
 
-
-
 submitButton.addEventListener("click", function(){
     buttonPressed();
 });
@@ -54,11 +52,21 @@ submitButton.addEventListener("click", function(){
 
 function buttonPressed(){
     const textData = formData.value;
-    const nameData = nameEl.value;
+    let nameData = nameEl.value;
 
-    if(textData !== "" && nameData !== ""){
-        console.log(`The Button has been clicked! Logging: ${textData}`);
-        push(questionsInDB, textData)
+    if(nameData == ""){
+        nameData = "Anonymous";
+    }
+
+    let allInfo = {
+        question: textData,
+        whoAsked: nameData,
+        likes: 0
+    }
+
+    if(textData !== ""){
+        //console.log(`The Button has been clicked! Logging: ${textData}`);
+        push(questionsInDB, allInfo)
         clearInputField();
     }
 
@@ -78,16 +86,26 @@ function clearInputField(){
 function appendItemToQuestions(question){
     
     const newQuestion = document.createElement("li");
-    newQuestion.textContent = question[1];
+    const newAsker = document.createElement("p");
+
+    newQuestion.textContent = question[1].question;
+    newQuestion.innerHTML += `<br><h4>Asked by: ${question[1].whoAsked}</h4>`;
+
+    //newQuestion.innerHTML += newAsker;
+    //newQuestion.innerHTML = `Asked by: ${question[1].whoAsked}`;
+
+
     const questionID = question[0];
     
      newQuestion.addEventListener("click", function(){
         let exactLocationInDB = ref(database, `questionsList/${questionID}`)
-        console.log("Question has been clicked!")
+        //console.log("Question has been clicked!")
         remove(exactLocationInDB);
      })
 
     questions.append(newQuestion);
+    //questions.append(newAsker);
+    console.log(question[1].whoAsked);
 
 
 }
